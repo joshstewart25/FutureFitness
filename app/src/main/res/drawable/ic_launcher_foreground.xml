@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Future logo, converted from the SVG (viewBox 18x24).
+    The group scales it to 40 high and centers it inside the adaptive icon's 66dp safe zone.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="1.6667"
+        android:scaleY="1.6667"
+        android:translateX="39.4"
+        android:translateY="34">
+
+        <path android:pathData="M1.44287,10.0916C1.47623,12.3982 4.11684,13.3005 11.1027,12.6321L6.24861,14.3288C0.341115,14.5227 0.000778751,10.79 0.00545002,10.0916C0.00545002,10.0916 -0.809019,3.31494 17.4753,0L14.6129,2.40404C5.55426,4.60988 1.44287,7.55145 1.44287,10.0916Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="7.63464"
+                    android:startY="2.03234"
+                    android:endX="11.1578"
+                    android:endY="12.5504"
+                    android:type="linear">
+                    <item
+                        android:color="#E0E1E0"
+                        android:offset="0.49" />
+                    <item
+                        android:color="#99999A"
+                        android:offset="0.65" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <path
+            android:fillColor="#F4F4F4"
+            android:pathData="M1.69695,10.0945C1.69695,12.2006 4.23712,13.0361 11.892,12.3007V12.5346C6.2094,14.8412 3.20143,18.685 1.99758,22.8297H1.69695C2.86677,18.7517 5.80834,14.8412 11.0895,12.6347C4.10366,13.3033 1.46305,12.4008 1.42969,10.0942C1.42969,7.55399 5.54107,4.61243 14.5993,2.40625V2.67351C5.77497,4.84699 1.69695,7.72149 1.69695,10.0945Z" />
+
+        <path android:pathData="M14.1803,9.97334L11.8904,12.3013C4.23548,13.0367 1.69531,12.2009 1.69531,10.0951C1.69531,7.72212 5.77333,4.84761 14.5977,2.6748L17.4722,3.88466C2.64091,6.80388 3.26353,10.0764 3.26353,10.0764C3.17277,12.4331 14.1806,9.97367 14.1806,9.97367L14.1803,9.97334Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="8.67253"
+                    android:startY="4.45089"
+                    android:endX="11.3618"
+                    android:endY="12.4785"
+                    android:type="linear">
+                    <item
+                        android:color="#99999A"
+                        android:offset="0.35" />
+                    <item
+                        android:color="#E0E1E0"
+                        android:offset="0.51" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <path
+            android:fillColor="#F5F5F5"
+            android:pathData="M14.1806,9.97266V13.1174L11.8906,12.5345V12.3006L14.1806,9.97266Z" />
+
+        <path
+            android:fillColor="#9B9B9B"
+            android:pathData="M14.1844,13.1181C3.57422,17.0666 2.91624,24.0005 2.91624,24.0005L2,22.8303C3.20352,18.6856 6.21182,14.8418 11.8944,12.5352L14.1844,13.1181Z" />
+
+        <path
+            android:fillColor="#E1E1E1"
+            android:pathData="M11.0895,12.6348C5.80829,14.8409 2.86672,18.7518 1.6969,22.8298L0.484375,24C1.25313,17.8289 6.23538,14.3318 6.23538,14.3318L11.0895,12.6351V12.6348Z" />
+
+        <path
+            android:fillColor="#F5F5F5"
+            android:pathData="M2.91344,24.0002H0.484375L1.69657,22.8301H1.9972L2.91344,24.0002Z" />
+
+        <path
+            android:fillColor="#F5F5F5"
+            android:pathData="M17.4764,0V3.88416L14.6016,2.6743V2.40671L17.4764,0Z" />
+    </group>
+</vector>
