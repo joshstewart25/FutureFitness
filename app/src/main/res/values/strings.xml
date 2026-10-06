@@ -3,4 +3,9 @@
     <string name="welcome_message">Welcome, %1$s</string>
     <string name="client_last_workout">Last workout: %1$s</string>
     <string name="client_no_workouts">No workouts yet</string>
+    <string name="workout_today">Today</string>
+    <string name="workout_recovery_day">Recovery Day</string>
+    <string name="workout_duration_minutes">%1$d min</string>
+    <string name="upcoming_workouts_empty">No workouts scheduled for the next 7 days</string>
+    <string name="previous_workouts">Previous Workouts</string>
 </resources>

@@ -25,7 +25,11 @@ fun AppNavHost(
 
         composable<ClientDetail> {
             ScreenScaffold { contentPadding ->
-                ClientDetailScreen(contentPadding = contentPadding)
+                ClientDetailScreen(
+                    contentPadding = contentPadding,
+                    // TODO: Navigate to the previous workouts screen once it exists.
+                    onPreviousWorkoutsClick = {}
+                )
             }
         }
     }

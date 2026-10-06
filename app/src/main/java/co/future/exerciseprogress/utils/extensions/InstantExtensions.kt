@@ -1,5 +1,6 @@
 package co.future.exerciseprogress.utils.extensions
 
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
@@ -12,6 +13,10 @@ fun Instant.toLongDateString(): String {
     val date = toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     val monthName = date.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
     return "$monthName ${date.dayOfMonth.withOrdinalSuffix()}, ${date.year}"
+}
+
+fun Instant.toLocalDate(zone: ZoneId): LocalDate {
+    return toJavaInstant().atZone(zone).toLocalDate()
 }
 
 // 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th". The teens (11, 12, 13) are the exception and use "th".
