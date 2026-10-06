@@ -19,6 +19,14 @@ fun Instant.toLocalDate(zone: ZoneId): LocalDate {
     return toJavaInstant().atZone(zone).toLocalDate()
 }
 
+// The backend sends 0001-01-01 instead of null for dates that were never set.
+private val UNSET_INSTANT = Instant.parse("0001-01-01T00:00:00Z")
+
+// Returns null when the date is missing or is the backend's "never set" value.
+fun Instant?.takeIfSet(): Instant? {
+    return this?.takeIf { it != UNSET_INSTANT }
+}
+
 // 1 -> "1st", 2 -> "2nd", 3 -> "3rd", 4 -> "4th". The teens (11, 12, 13) are the exception and use "th".
 private fun Int.withOrdinalSuffix(): String {
     val suffix = when {

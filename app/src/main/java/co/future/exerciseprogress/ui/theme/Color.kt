@@ -27,3 +27,9 @@ val FutureLightTextPrimary = Color(0xFF1C1C1E)
 
 // Darker green so the accent stays readable on light backgrounds
 val FutureGreenDark = Color(0xFF2E9E00)
+
+// Previous workout card backgrounds. Soft tints so the cards stand out without shouting.
+val NotCompletedCardLight = Color(0xFFDCEBF8)
+val NotCompletedCardDark = Color(0xFF243847)
+val MissedCardLight = Color(0xFFF8DEDE)
+val MissedCardDark = Color(0xFF4A2B2D)

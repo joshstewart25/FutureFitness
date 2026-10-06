@@ -11,3 +11,8 @@ fun <T> Collection<T>.safeGet(index: Int): T? {
 fun <T> Collection<T>.isNotEmpty(): Boolean {
     return !isEmpty()
 }
+
+// Removes the item if it is in the set, adds it if it is not.
+fun <T> Set<T>.toggled(item: T): Set<T> {
+    return if (item in this) this - item else this + item
+}

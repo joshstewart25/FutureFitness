@@ -5,8 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import co.future.exerciseprogress.ui.clientdetail.ClientDetailScreen
 import co.future.exerciseprogress.ui.components.ScreenScaffold
+import co.future.exerciseprogress.ui.previousworkouts.PreviousWorkoutsScreen
 import co.future.exerciseprogress.ui.welcome.WelcomeScreen
 
 @Composable
@@ -23,12 +25,23 @@ fun AppNavHost(
             }
         }
 
-        composable<ClientDetail> {
+        composable<ClientDetail> { backStackEntry ->
+            val clientID = backStackEntry.toRoute<ClientDetail>().clientID
+
             ScreenScaffold { contentPadding ->
                 ClientDetailScreen(
                     contentPadding = contentPadding,
-                    // TODO: Navigate to the previous workouts screen once it exists.
-                    onPreviousWorkoutsClick = {}
+                    onPreviousWorkoutsClick = { navController.navigate(PreviousWorkouts(clientID)) }
+                )
+            }
+        }
+
+        composable<PreviousWorkouts> {
+            ScreenScaffold { contentPadding ->
+                PreviousWorkoutsScreen(
+                    contentPadding = contentPadding,
+                    // TODO: Navigate to the workout detail screen once it exists.
+                    onWorkoutClick = {}
                 )
             }
         }
