@@ -16,11 +16,11 @@ import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 // Today plus the next six days.
 private const val UPCOMING_DAYS = 7
-
-private const val SECONDS_PER_MINUTE = 60
 
 @HiltViewModel
 class ClientDetailViewModel @Inject constructor(
@@ -74,6 +74,6 @@ private fun buildUpcomingWorkouts(
 // Workout durations are stored in seconds. Anything that rounds to zero minutes is treated as no duration.
 private fun Workout.durationInMinutes(): Int? {
     return duration
-        ?.let { (it / SECONDS_PER_MINUTE).roundToInt() }
+        ?.let { it.seconds.toDouble(DurationUnit.MINUTES).roundToInt() }
         ?.takeIf { it > 0 }
 }

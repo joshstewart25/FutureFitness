@@ -28,8 +28,6 @@ import androidx.compose.ui.unit.dp
 import co.future.exerciseprogress.R
 
 private val BAR_HEIGHT = 10.dp
-
-// The theme's own track color is too close to the card color to see, so the empty part of the bar gets its own tint.
 private const val TRACK_ALPHA = 0.35f
 
 @Composable
@@ -62,7 +60,7 @@ fun DifficultyCard(
                 )
             }
 
-            // The bar fills toward "Hard". The level word above already says the same thing, so the bar is skipped by screen readers.
+            // The bar fills toward "Hard".
             LinearProgressIndicator(
                 progress = { difficulty.value },
                 color = MaterialTheme.colorScheme.tertiary,

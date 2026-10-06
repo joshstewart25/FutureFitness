@@ -2,13 +2,10 @@ package co.future.exerciseprogress.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Brand colors estimated from screenshots of the live Future app.
-
 // Accent colors
 val FutureGreen = Color(0xFF6DF033)
 val FutureBlue = Color(0xFF1296F0)
 val FutureOrange = Color(0xFFF5990A)
-val FuturePurple = Color(0xFF502C71)
 
 // Dark neutrals
 val FutureBackground = Color(0xFF1C1C1E)

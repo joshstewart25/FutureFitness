@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.future.exerciseprogress.R
 import co.future.exerciseprogress.ui.components.DateRangePickerDialog
+import co.future.exerciseprogress.ui.previousworkouts.enums.PreviousWorkoutStatus
 import co.future.exerciseprogress.utils.DateRange
 import co.future.exerciseprogress.utils.extensions.toMediumDate
 import java.time.LocalDate
@@ -50,7 +51,7 @@ fun PreviousWorkoutsFilterBar(
             FilterChip(
                 selected = filters.dateRange != null,
                 onClick = { isDatePickerShown = true },
-                label = { Text(text = filters.dateRange.toLabel()) }
+                label = { Text(text = dateRangeLabel(filters.dateRange)) }
             )
 
             if (filters.isActive) {
@@ -75,10 +76,14 @@ fun PreviousWorkoutsFilterBar(
 }
 
 @Composable
-private fun DateRange?.toLabel(): String {
-    return if (this == null) {
+private fun dateRangeLabel(dateRange: DateRange?): String {
+    return if (dateRange == null) {
         stringResource(R.string.filter_date_any)
     } else {
-        stringResource(R.string.filter_date_range, start.toMediumDate(), end.toMediumDate())
+        stringResource(
+            R.string.filter_date_range,
+            dateRange.start.toMediumDate(),
+            dateRange.end.toMediumDate()
+        )
     }
 }

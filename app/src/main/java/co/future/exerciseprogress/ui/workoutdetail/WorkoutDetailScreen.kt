@@ -27,8 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.future.exerciseprogress.R
 import co.future.exerciseprogress.ui.components.withExtraPadding
 import co.future.exerciseprogress.ui.theme.HeartRateRed
-
-private const val MINUTES_PER_HOUR = 60
+import co.future.exerciseprogress.utils.formatMinutes
 
 @Composable
 fun WorkoutDetailScreen(
@@ -172,7 +171,7 @@ private fun LazyListScope.summaryItems(
                         icon = Icons.Filled.Timer,
                         iconTint = MaterialTheme.colorScheme.secondary,
                         label = stringResource(R.string.workout_duration_label),
-                        value = durationText(durationMinutes),
+                        value = formatMinutes(durationMinutes),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -208,18 +207,5 @@ private fun LazyListScope.summaryItems(
                 onToggle = { onSectionToggled(section.id) }
             )
         }
-    }
-}
-
-// Example output: "58 min" or "1 hr 8 min"
-@Composable
-private fun durationText(totalMinutes: Int): String {
-    val hours = totalMinutes / MINUTES_PER_HOUR
-    val minutes = totalMinutes % MINUTES_PER_HOUR
-
-    return if (hours > 0) {
-        stringResource(R.string.workout_duration_hours_minutes, hours, minutes)
-    } else {
-        stringResource(R.string.workout_duration_minutes, minutes)
     }
 }

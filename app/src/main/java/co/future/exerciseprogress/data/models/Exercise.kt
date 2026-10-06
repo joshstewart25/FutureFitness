@@ -64,32 +64,4 @@ data class Exercise(
     
     @SerialName("type")
     val type: String? = null
-) {
-    val sideDisplayName: String?
-        get() = side?.let { Side.fromRawValue(it)?.displayName }
-}
-
-enum class Side(val rawValue: String) {
-    RIGHT("right_side"),
-    LEFT("left_side"),
-    RIGHT_ARM("right_arm"),
-    LEFT_ARM("left_arm"),
-    RIGHT_LEG("right_leg"),
-    LEFT_LEG("left_leg");
-    
-    val displayName: String
-        get() = when (this) {
-            LEFT -> "Left Side"
-            RIGHT -> "Right Side"
-            LEFT_ARM -> "Left Arm"
-            RIGHT_ARM -> "Right Arm"
-            LEFT_LEG -> "Left Leg"
-            RIGHT_LEG -> "Right Leg"
-        }
-    
-    companion object {
-        fun fromRawValue(value: String): Side? {
-            return entries.find { it.rawValue == value }
-        }
-    }
-}
+)

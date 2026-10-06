@@ -19,10 +19,7 @@ import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.random.Random
 
-// A slow piece takes this long to fall once. Fast pieces fall twice in the same time.
 private const val LOOP_DURATION_MILLIS = 3000
-
-// Pieces start just above the top and end just below the bottom, so they enter and leave off screen.
 private const val START_Y = -0.1f
 private const val FALL_DISTANCE = 1.2f
 
@@ -34,7 +31,6 @@ private val confettiColors = listOf(
     Color(0xFFAB47BC)
 )
 
-// Positions are fractions of the canvas size so the same piece works at any card size.
 private class ConfettiPiece(
     val startX: Float,
     val headStart: Float,
@@ -65,7 +61,6 @@ fun FallingConfetti(
         val pieceHeight = 4.dp.toPx()
 
         pieces.forEach { piece ->
-            // Whole-number falls per loop keep the loop seamless. The restart happens off screen.
             val fallProgress = (loopTime.value * piece.fallsPerLoop + piece.headStart) % 1f
             val sway = sin(fallProgress * piece.swayCount * 2f * PI.toFloat()) * piece.swayWidth
             val center = Offset(

@@ -6,6 +6,7 @@ import androidx.navigation.toRoute
 import co.future.exerciseprogress.data.WorkoutsRepository
 import co.future.exerciseprogress.data.models.Workout
 import co.future.exerciseprogress.ui.navigation.PreviousWorkouts
+import co.future.exerciseprogress.ui.previousworkouts.enums.PreviousWorkoutStatus
 import co.future.exerciseprogress.utils.DateRange
 import co.future.exerciseprogress.utils.extensions.takeIfSet
 import co.future.exerciseprogress.utils.extensions.toLocalDate
@@ -30,7 +31,6 @@ class PreviousWorkoutsViewModel @Inject constructor(
 
     private val clientID = savedStateHandle.toRoute<PreviousWorkouts>().clientID
 
-    // Filters only narrow this list down, so it is built once.
     private val allWorkouts = buildPreviousWorkouts(
         workouts = workoutsRepository.workouts.filter { it.userID == clientID },
         zone = clock.zone
@@ -106,7 +106,8 @@ private fun buildPreviousWorkouts(
 // Each status is dated by the moment that best marks it as over:
 // completed -> when it was completed, not completed -> when it was started, missed -> when it was marked missed.
 private fun Workout.toFinishedWorkout(): FinishedWorkout? {
-    lastCompletedAt?.let { completedAt ->
+    val completedAt = lastCompletedAt
+    if (completedAt != null) {
         return FinishedWorkout(this, PreviousWorkoutStatus.COMPLETED, completedAt)
     }
 

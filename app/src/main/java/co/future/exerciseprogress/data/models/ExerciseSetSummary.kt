@@ -1,19 +1,9 @@
 package co.future.exerciseprogress.data.models
 
+import co.future.exerciseprogress.data.models.enums.ExerciseSetCompletionState
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
 import kotlin.time.Instant
-
-@Serializable
-enum class ExerciseSetCompletionState {
-    @SerialName("none")
-    NONE,
-    @SerialName("partial")
-    PARTIAL,
-    @SerialName("full")
-    FULL
-}
 
 @Serializable
 data class ExerciseSetSummary(
@@ -64,30 +54,4 @@ data class ExerciseSetSummary(
     
     @SerialName("motion_data_path")
     val motionDataPath: String? = null
-) {
-    companion object {
-        fun create(exerciseSetID: String, workoutID: String): ExerciseSetSummary {
-            return ExerciseSetSummary(
-                exerciseSetID = exerciseSetID,
-                sessionID = UUID.randomUUID().toString().lowercase(),
-                completionState = ExerciseSetCompletionState.NONE
-            )
-        }
-    }
-}
-
-fun List<ExerciseSetSummary>.highestCompletionState(): ExerciseSetCompletionState {
-    return when {
-        any { it.completionState == ExerciseSetCompletionState.FULL } -> ExerciseSetCompletionState.FULL
-        any { it.completionState == ExerciseSetCompletionState.PARTIAL } -> ExerciseSetCompletionState.PARTIAL
-        else -> ExerciseSetCompletionState.NONE
-    }
-}
-
-fun List<ExerciseSetSummary>.lastReportedWeight(): Float? {
-    return mapNotNull { it.weight }.lastOrNull()
-}
-
-fun List<ExerciseSetSummary>.lastRecordedRepCount(): Int? {
-    return mapNotNull { it.repsReported ?: it.repsCounted }.lastOrNull()
-}
+)

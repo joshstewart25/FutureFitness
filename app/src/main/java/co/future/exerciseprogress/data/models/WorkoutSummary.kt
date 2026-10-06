@@ -1,20 +1,9 @@
 package co.future.exerciseprogress.data.models
 
+import co.future.exerciseprogress.data.models.enums.WorkoutCompletionState
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.util.UUID
-import java.util.TimeZone
 import kotlin.time.Instant
-
-@Serializable
-enum class WorkoutCompletionState {
-    @SerialName("none")
-    NONE,
-    @SerialName("partial")
-    PARTIAL,
-    @SerialName("full")
-    FULL
-}
 
 @Serializable
 data class WorkoutSummary(
@@ -93,27 +82,4 @@ data class WorkoutSummary(
     fun setSummariesFor(exerciseSetID: String): List<ExerciseSetSummary> {
         return setSummaries.filter { it.exerciseSetID == exerciseSetID }
     }
-    
-    val computedEndDate: Instant?
-        get() {
-            return if (timedOutDate != null) {
-                startedAt
-            } else {
-                completedAt
-            }
-        }
-    
-    companion object {
-        fun create(workoutID: String): WorkoutSummary {
-            return WorkoutSummary(
-                workoutID = workoutID,
-                sessionID = UUID.randomUUID().toString().lowercase(),
-                completionState = WorkoutCompletionState.NONE
-            )
-        }
-    }
-}
-
-fun List<WorkoutSummary>.sortedByStartedAtDate(): List<WorkoutSummary> {
-    return sortedBy { it.startedAt }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import co.future.exerciseprogress.R
 import co.future.exerciseprogress.ui.components.FallingConfetti
 import co.future.exerciseprogress.utils.extensions.toDayHeading
+import co.future.exerciseprogress.utils.formatMinutes
 
 @Composable
 fun WorkoutCard(
@@ -34,7 +35,6 @@ fun WorkoutCard(
 
     Card(modifier = modifier.fillMaxWidth()) {
         Box {
-            // Drawn first so the confetti falls behind the text.
             if (workout.isRestDay) {
                 FallingConfetti(modifier = Modifier.matchParentSize())
             }
@@ -63,7 +63,7 @@ fun WorkoutCard(
                 }
                 if (workout.durationMinutes != null) {
                     Text(
-                        text = stringResource(R.string.workout_duration_minutes, workout.durationMinutes),
+                        text = formatMinutes(workout.durationMinutes),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

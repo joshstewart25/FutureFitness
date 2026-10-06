@@ -1,5 +1,6 @@
 package co.future.exerciseprogress.data.models
 
+import co.future.exerciseprogress.data.models.enums.WorkoutCompletionState
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
@@ -48,9 +49,6 @@ data class Workout(
     val isRestDay: Boolean
         get() = type == "rest"
     
-    val exerciseSetsFromSections: List<ExerciseSet>
-        get() = sections.flatMap { it.exerciseSets }
-
     // Only fully completed summaries count. Partial or abandoned attempts are ignored.
     val lastCompletedAt: Instant?
         get() = summaries

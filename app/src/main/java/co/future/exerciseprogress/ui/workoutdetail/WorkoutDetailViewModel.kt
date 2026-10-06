@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import co.future.exerciseprogress.data.WorkoutsRepository
 import co.future.exerciseprogress.data.models.ExerciseSet
-import co.future.exerciseprogress.data.models.ExerciseSetCompletionState
 import co.future.exerciseprogress.data.models.ExerciseSetSummary
-import co.future.exerciseprogress.data.models.ExerciseSetType
 import co.future.exerciseprogress.data.models.HeartRateSample
 import co.future.exerciseprogress.data.models.Workout
-import co.future.exerciseprogress.data.models.WorkoutCompletionState
 import co.future.exerciseprogress.data.models.WorkoutSummary
+import co.future.exerciseprogress.data.models.enums.ExerciseSetCompletionState
+import co.future.exerciseprogress.data.models.enums.ExerciseSetType
+import co.future.exerciseprogress.data.models.enums.WorkoutCompletionState
 import co.future.exerciseprogress.ui.navigation.WorkoutDetail
+import co.future.exerciseprogress.ui.workoutdetail.enums.DifficultyLevel
 import co.future.exerciseprogress.utils.extensions.takeIfSet
 import co.future.exerciseprogress.utils.extensions.toggled
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,14 +23,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+import kotlin.time.Instant
 
-private const val SECONDS_PER_MINUTE = 60
-
-// Difficulty is stored from 0 to 1. Below the first cutoff is easy, below the second is moderate, anything above is hard.
 private const val EASY_CUTOFF = 1f / 3f
 private const val MODERATE_CUTOFF = 2f / 3f
-
-// A line needs at least two readings to be drawn.
 private const val MIN_HEART_RATE_POINTS = 2
 
 @HiltViewModel
@@ -51,21 +50,35 @@ class WorkoutDetailViewModel @Inject constructor(
 }
 
 private fun buildUiState(workout: Workout?): WorkoutDetailUiState {
+    if (workout == null) {
+        return WorkoutDetailUiState(
+            name = "",
+            description = "",
+            isRestDay = false,
+            summary = null
+        )
+    }
+
+    val displayedSummary = workout.displayedSummary()
+
     return WorkoutDetailUiState(
-        name = workout?.name.orEmpty(),
-        description = workout?.description.orEmpty(),
-        isRestDay = workout?.isRestDay ?: false,
-        summary = workout?.let { it.displayedSummary()?.toUiState(it) }
+        name = workout.name.orEmpty(),
+        description = workout.description.orEmpty(),
+        isRestDay = workout.isRestDay,
+        summary = displayedSummary?.toUiState(workout)
     )
 }
 
 // The attempt the dashboard describes: the most recent completed one, or else the most recent one that was started.
+// A summary with no date counts as the oldest.
 private fun Workout.displayedSummary(): WorkoutSummary? {
-    val latestCompleted = summaries
-        .filter { it.completionState == WorkoutCompletionState.FULL }
-        .maxWithOrNull(compareBy { it.completedAt })
+    val completedSummaries = summaries.filter { it.completionState == WorkoutCompletionState.FULL }
+    val latestCompleted = completedSummaries.maxByOrNull { it.completedAt ?: Instant.DISTANT_PAST }
+    if (latestCompleted != null) {
+        return latestCompleted
+    }
 
-    return latestCompleted ?: summaries.maxWithOrNull(compareBy { it.startedAt.takeIfSet() })
+    return summaries.maxByOrNull { it.startedAt.takeIfSet() ?: Instant.DISTANT_PAST }
 }
 
 private fun WorkoutSummary.toUiState(workout: Workout): WorkoutSummaryUiState {
@@ -76,7 +89,7 @@ private fun WorkoutSummary.toUiState(workout: Workout): WorkoutSummaryUiState {
         maxHeartRate = maxHeartRate,
         activeEnergyBurned = activeEnergyBurned,
         durationMinutes = actualDuration
-            ?.let { (it.toDouble() / SECONDS_PER_MINUTE).roundToInt() }
+            ?.let { it.seconds.toDouble(DurationUnit.MINUTES).roundToInt() }
             ?.takeIf { it > 0 },
         notes = notes?.trim()?.takeIf { it.isNotEmpty() },
         difficulty = difficulty?.toDifficultyUiState(),
@@ -145,8 +158,6 @@ private fun buildSetSections(workout: Workout, summary: WorkoutSummary): List<Se
     }
 }
 
-// Reps are rarely recorded by the app, so the planned reps stand in for them. Weight falls back to the plan the same way.
-// A weight of zero means bodyweight and is left out.
 private fun PerformedSet.toUiState(): SetResultUiState {
     return SetResultUiState(
         weight = (summary.weight ?: set.weight)?.takeIf { it > 0f },
@@ -161,7 +172,11 @@ private fun PerformedSet.toUiState(): SetResultUiState {
         } else {
             null
         },
-        distanceMeters = if (set.type == ExerciseSetType.DISTANCE) set.distance else null,
+        distanceMeters = if (set.type == ExerciseSetType.DISTANCE) {
+            set.distance
+        } else {
+            null
+        },
         completionState = summary.completionState
     )
 }

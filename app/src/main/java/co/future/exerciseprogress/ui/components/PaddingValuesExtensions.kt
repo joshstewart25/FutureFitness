@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 
-// Adds the same extra space on all four sides.
 @Composable
 fun PaddingValues.withExtraPadding(extra: Dp): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
+
     return PaddingValues(
         start = calculateStartPadding(layoutDirection) + extra,
         top = calculateTopPadding() + extra,

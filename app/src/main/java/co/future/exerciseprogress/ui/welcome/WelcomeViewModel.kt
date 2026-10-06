@@ -35,17 +35,19 @@ private fun buildClientCards(
 ): List<ClientCardUiState> {
     val workoutsByUserID = workouts.groupBy { it.userID }
 
-    return clients
-        .map { client ->
-            val clientWorkouts = workoutsByUserID[client.id].orEmpty()
-            ClientCardUiState(
-                id = client.id,
-                name = client.fullName,
-                lastWorkoutCompletedAt = clientWorkouts.mapNotNull { it.lastCompletedAt }.maxOrNull()
-            )
-        }
-        .sortedWith(
-            compareByDescending<ClientCardUiState> { it.lastWorkoutCompletedAt }
-                .thenBy { it.name }
+    val clientCards = clients.map { client ->
+        val clientWorkouts = workoutsByUserID[client.id].orEmpty()
+        ClientCardUiState(
+            id = client.id,
+            name = client.fullName,
+            lastWorkoutCompletedAt = clientWorkouts.mapNotNull { it.lastCompletedAt }.maxOrNull()
         )
+    }
+
+    val (clientsWithWorkouts, clientsWithoutWorkouts) = clientCards.partition {
+        it.lastWorkoutCompletedAt != null
+    }
+
+    return clientsWithWorkouts.sortedByDescending { it.lastWorkoutCompletedAt } +
+        clientsWithoutWorkouts.sortedBy { it.name }
 }

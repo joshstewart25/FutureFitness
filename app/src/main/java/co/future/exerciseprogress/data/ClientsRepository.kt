@@ -3,7 +3,9 @@ package co.future.exerciseprogress.data
 import android.content.Context
 import co.future.exerciseprogress.data.models.Client
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,10 +25,12 @@ class ClientsRepository @Inject constructor(
         return clients.firstOrNull { it.id == clientID }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun loadClients(): List<Client> {
         return try {
-            val clientsJsonString = context.assets.open("clients.json").bufferedReader().use { it.readText() }
-            json.decodeFromString<List<Client>>(clientsJsonString)
+            context.assets.open("clients.json").use { stream ->
+                json.decodeFromStream<List<Client>>(stream)
+            }
         } catch (e: Exception) {
             println("Failed to load clients: ${e.message}")
             emptyList()

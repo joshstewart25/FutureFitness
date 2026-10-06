@@ -8,6 +8,6 @@ data class DateRange(
     val end: LocalDate
 ) {
     operator fun contains(date: LocalDate): Boolean {
-        return !date.isBefore(start) && !date.isAfter(end)
+        return date in start..end
     }
 }

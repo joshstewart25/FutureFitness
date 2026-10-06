@@ -1,124 +1,97 @@
-# Android Engineering Project - Exercise Progress
+# Fitness Stats
 
-In this project, we've set up a realistic scenario of the type of feature development we'd do here at Future. We'd like you to do the brainstorming, planning, building, and presenting. Basically, we're attempting to create a compressed microcosm of working at Future!
+An Android app that lets a coach review how their clients are training. Pick a client, see what they have coming up this week, browse their workout history, and open any past workout to see how it went: heart rate, effort, notes, where it happened, and every set that was performed.
 
-Please take 2 hours to work on the project (excluding any time reading this document + formulating a plan). Please feel free to reach out to us to ask questions and engage us for assistance where needed before and during the project.
+The app started as Future's "Exercise Progress" Android project and runs entirely on bundled sample data, so there is no backend or sign-in.
 
-Afterwards, you’ll sit with the team and lead a 30-minute discussion around the progress you made, how you thought about the problem & solution, and what you might do if given more time.
+## What it does
 
-We are much more interested in how you were thinking about the problem and solution than the polish and completeness of your work – just make as much progress as you can given the time you have.
+The app has four screens:
 
-## Problem Statement
+**Welcome** lists the coach's clients, most recently active first. Each card shows the date of the client's last completed workout. Clients with no completed workouts are listed last, alphabetically.
 
-Future coaches often look at athletic performance (such as weight lifted) over time for a client as an indication of progress towards a specific goal.
+**Client detail** shows the client's workouts for today and the next six days. Rest days appear as "Recovery Day" with a little falling confetti. A button leads to the full history.
 
-We’d like you to construct a simple app that shows this information about a single client based on their recorded workout data. This app should have:
+**Previous workouts** lists everything the client has already done, newest first. Each card is labeled with its status, and the cards that need attention are tinted as well:
 
-- A way to select a specific exercise completed by the client.
-- A way to see the historical performance data.
+- **Completed**: finished the workout.
+- **Not completed**: started it but never finished.
+- **Missed**: never started and marked as missed.
 
-It’s up to you how to organize and present this information as long as it meets these requirements.
+The list can be narrowed with status chips (pick any combination) and a date range picker, and a single button clears the filters.
 
-## Data Model Architecture
+**Workout detail** is a dashboard for one workout. A section only appears when the workout has data for it:
 
-This is a Entity Relationship Diagram of the data models we use to store workout data. We only show some of more important fields for brevity, but feel free to use any other fields you need.
+- A heart rate chart over the whole workout, with the peak marked.
+- Max and average heart rate, energy burned and duration.
+- The client's notes after the workout.
+- How hard the workout felt, from easy to hard.
+- A map pinning where the workout took place (OpenStreetMap, needs an internet connection).
+- The sets performed, grouped by workout section. Tap a section to expand it and see each set's weight, reps, time or distance, with an icon for completed, partially completed or skipped.
 
-```mermaid
-erDiagram
-    Workout ||--o{ WorkoutSection : "has sections"
-    Workout ||--o{ WorkoutSummary : "has summaries"
-    WorkoutSection ||--o{ ExerciseSet : "contains exerciseSets"
-    ExerciseSet ||--o| Exercise : "references"
-    WorkoutSummary ||--o{ ExerciseSetSummary : "has setSummaries"
-    ExerciseSetSummary ||--o| ExerciseSet : "references"
+The app supports light and dark themes and draws edge-to-edge behind the system bars.
 
-    Workout {
-        string id PK
-        string name
-        string description
-        string scheduledAt
-        WorkoutSection[] sections
-        WorkoutSummary[] summaries
-    }
+## Tech stack
 
-    WorkoutSection {
-        string id PK
-        string name
-        string workoutID FK
-        ExerciseSet[] exerciseSets
-    }
+- Kotlin, Jetpack Compose and Material 3
+- Navigation Compose with type-safe routes
+- Hilt for dependency injection
+- kotlinx.serialization for reading the JSON data
+- [Vico](https://github.com/patrykandpatrick/vico) for the heart rate chart
+- [osmdroid](https://github.com/osmdroid/osmdroid) for the map (no API key needed)
 
-    ExerciseSet {
-        string id PK
-        ExerciseSetType type
-        int reps
-        int duration
-        float weight
-        double distance
-        Exercise exercise
-    }
+Versions are all in [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
 
-    Exercise {
-        string id PK
-        string name
-        string description
-        string side
-        string muscleGroups
-        string equipmentRequired
-        double estimatedRepDuration
-        boolean isAlternating
-    }
+## Architecture
 
-    WorkoutSummary {
-        string workoutID FK
-        string workoutSummaryID
-        string completedAt
-        WorkoutCompletionState completionState
-        int activeEnergyBurned
-        int averageHeartRate
-        float difficulty
-        ExerciseSetSummary[] setSummaries
-    }
+The app is a single activity built with MVVM and unidirectional data flow. Each screen has a ViewModel that builds an immutable `UiState` from the repositories and exposes it as a `StateFlow`. The screen reads it with `collectAsStateWithLifecycle()` and reports user actions back to the ViewModel.
 
-    ExerciseSetSummary {
-        string id PK
-        string exerciseSetID FK
-        string workoutSummaryID FK
-        string completedAt
-        int reps
-        int duration
-        float weight
-        double distance
-    }
+Screens come in pairs: a public `XScreen` that connects the ViewModel, and a private `XContent` that only draws the state it is given.
+
+```
+app/src/main/java/co/future/exerciseprogress/
+├── data/           Repositories and the serializable models
+├── di/             Hilt module
+├── ui/
+│   ├── navigation/ NavHost and the route definitions
+│   ├── welcome/
+│   ├── clientdetail/
+│   ├── previousworkouts/
+│   ├── workoutdetail/
+│   ├── components/ Shared pieces (ScreenScaffold, date range picker, confetti, ...)
+│   └── theme/
+└── utils/          DateRange and small extension functions
 ```
 
+Every feature folder holds its screen, ViewModel and `UiState`, plus any cards or widgets only that screen uses. Every screen is wrapped in `ScreenScaffold`, which handles the system bar insets for edge-to-edge drawing.
 
+## Data
 
+The sample data lives in [`app/src/main/assets`](app/src/main/assets):
 
+| Path | Contents |
+| --- | --- |
+| `clients.json` | The list of clients |
+| `workouts.json` | An index of every workout |
+| `workouts/<id>.json` | One file per workout, with its sections, sets and exercises |
+| `summaries/<id>.json` | One file per attempt at a workout: heart rate, location, notes and set results |
 
-## Project Details
+`ClientsRepository` and `WorkoutsRepository` read these files once at startup and keep everything in memory. The ViewModels only talk to the repositories, so swapping in a real data source later only touches the data layer.
 
-We’ve provided a basic Android project skeleton with a data set with workout data for the client, and the corresponding models and loading functions in Kotlin so you can get started quickly.
+A few rules in the data are worth knowing about:
 
-The final output should be an app that runs in an Android emulator, written in Kotlin. You’re free to use any other tools or libraries that you are comfortable with.
+- A workout counts as completed only when one of its summaries has a `full` completion state. Partial or abandoned attempts are ignored for that.
+- If a workout was attempted more than once, the detail screen shows the latest completed attempt, or else the latest one that was started.
+- Rest sets are hidden from the set list. When a set has no recorded reps or weight, the planned values are shown instead.
+- Set summaries whose set has the all-zero "nil" UUID are dropped when loading.
 
-After the project period, we’d like you to present to the team about what you built, so save a few minutes at the end to collect your thoughts. We’ll also want to see the work that you did along the way!
+## Known limitations
 
-## Agentic Coding
+- **"Today" is fixed.** The sample workouts are all from 2020, so the app treats 2020-11-24 as today (see `AppModule.provideClock`). Switching to the real clock is a one-line change once there is current data.
+- **The greeting name is hard-coded.** The welcome screen says "Welcome, Josh" until there is a user model.
+- **Data is loaded up front.** The repositories read all the JSON at startup instead of on demand, which is what causes the short wait at startup. A real backend or database would replace this.
+- **No per-exercise progress view yet.** The original brief asked to pick an exercise and see its performance over time. The workout detail shows each workout's sets, but nothing tracks one exercise across workouts.
 
-We want you to use AI coding agents like Claude Code, Codex, Cursor for this project — they're part of how we work here. If you use one, please follow these guidelines:
+## Development
 
-- Include all the configuration / rules you used to guide the AI Coding Agents (CLAUDE.md, skills, etc.)
-- Include a short paragraph of your workflow and tools used
-- We expect submissions completed with aid of AI coding agents to still be well understood by you.
-- Be prepared to walk us through the process you followed — how you broke down the problem, what you asked the agent for, and where you stepped in yourself
-- Have your project set up and ready to modify if you proceed to a live take-home review, so we can explore changes together
-
-## If You're Having Fun
-
-Totally optional, but we love seeing a screen recording walkthrough of the app.
-
-## Submit
-
-- GitHub repo (if private — share access with `travischapman`)
-
+The project was built with Claude Code. The conventions it follows (MVVM, readable code over clever code, light comments, edge-to-edge screens) are written down in [`CLAUDE.md`](CLAUDE.md).

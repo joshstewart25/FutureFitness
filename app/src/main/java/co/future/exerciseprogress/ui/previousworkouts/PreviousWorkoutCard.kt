@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.future.exerciseprogress.R
+import co.future.exerciseprogress.ui.previousworkouts.enums.PreviousWorkoutStatus
 import co.future.exerciseprogress.ui.theme.MissedCardDark
 import co.future.exerciseprogress.ui.theme.MissedCardLight
 import co.future.exerciseprogress.ui.theme.NotCompletedCardDark
@@ -40,7 +41,7 @@ fun PreviousWorkoutCard(
 
     Card(
         onClick = onClick,
-        colors = workout.status.cardColors(),
+        colors = cardColorsFor(workout.status),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -48,7 +49,6 @@ fun PreviousWorkoutCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // The status text backs up the card color so the meaning doesn't rely on color alone.
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = workout.finishedDate.toDayHeadingWithYear(),
@@ -82,16 +82,24 @@ fun PreviousWorkoutCard(
 
 // Completed workouts keep the normal card color.
 @Composable
-private fun PreviousWorkoutStatus.cardColors(): CardColors {
+private fun cardColorsFor(status: PreviousWorkoutStatus): CardColors {
     val isDarkTheme = isSystemInDarkTheme()
 
-    return when (this) {
+    return when (status) {
         PreviousWorkoutStatus.COMPLETED -> CardDefaults.cardColors()
         PreviousWorkoutStatus.NOT_COMPLETED -> CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) NotCompletedCardDark else NotCompletedCardLight
+            containerColor = if (isDarkTheme) {
+                NotCompletedCardDark
+            } else {
+                NotCompletedCardLight
+            }
         )
         PreviousWorkoutStatus.MISSED -> CardDefaults.cardColors(
-            containerColor = if (isDarkTheme) MissedCardDark else MissedCardLight
+            containerColor = if (isDarkTheme) {
+                MissedCardDark
+            } else {
+                MissedCardLight
+            }
         )
     }
 }

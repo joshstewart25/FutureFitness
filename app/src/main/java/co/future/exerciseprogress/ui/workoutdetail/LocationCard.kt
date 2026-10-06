@@ -79,7 +79,7 @@ fun LocationCard(
     }
 }
 
-// An OpenStreetMap view with a pin on the workout location. It is a picture only, so it can't be dragged or zoomed.
+// An OpenStreetMap view with a pin on the workout location.
 @Composable
 private fun LocationMap(
     location: LocationUiState,
@@ -91,7 +91,6 @@ private fun LocationMap(
     val mapDescription = stringResource(R.string.workout_location_map_description)
     val pinIcon = remember { ContextCompat.getDrawable(context, R.drawable.ic_map_pin) }
 
-    // osmdroid needs to be told when the screen pauses and resumes, and to let go of its resources when it leaves.
     DisposableEffect(lifecycle, mapView) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -111,7 +110,6 @@ private fun LocationMap(
     AndroidView(
         factory = { mapView },
         update = { it.showPin(location, pinIcon) },
-        // The map paints a little past its edges, so it is clipped to stay off the card's header.
         modifier = modifier
             .clipToBounds()
             .semantics { contentDescription = mapDescription }
@@ -119,7 +117,6 @@ private fun LocationMap(
 }
 
 private fun createMapView(context: Context): MapView {
-    // OpenStreetMap asks apps to identify themselves. The downloaded map tiles are kept in the app's own cache folder.
     Configuration.getInstance().apply {
         userAgentValue = context.packageName
         osmdroidBasePath = File(context.cacheDir, "osmdroid")
@@ -147,7 +144,6 @@ private fun MapView.showPin(location: LocationUiState, pinIcon: Drawable?) {
     controller.setCenter(position)
 }
 
-// Ignores touches so the screen keeps scrolling when a finger lands on the map.
 private class StaticMapView(context: Context) : MapView(context) {
     override fun dispatchTouchEvent(event: MotionEvent): Boolean = false
 }

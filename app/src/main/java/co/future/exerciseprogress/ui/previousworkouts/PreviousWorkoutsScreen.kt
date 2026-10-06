@@ -18,6 +18,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.future.exerciseprogress.R
 import co.future.exerciseprogress.ui.components.withExtraPadding
+import co.future.exerciseprogress.ui.previousworkouts.enums.PreviousWorkoutStatus
 import co.future.exerciseprogress.utils.DateRange
 
 @Composable

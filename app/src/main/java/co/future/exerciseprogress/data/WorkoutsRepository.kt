@@ -3,11 +3,14 @@ package co.future.exerciseprogress.data
 import android.content.Context
 import co.future.exerciseprogress.data.models.Workout
 import co.future.exerciseprogress.data.models.WorkoutSummary
-import co.future.exerciseprogress.utils.extensions.nilUUIDString
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 import javax.inject.Singleton
+
+private const val NIL_UUID_STRING = "00000000-0000-0000-0000-000000000000"
 
 @Singleton
 class WorkoutsRepository @Inject constructor(
@@ -22,34 +25,35 @@ class WorkoutsRepository @Inject constructor(
     private val _workouts = mutableListOf<Workout>()
     val workouts: List<Workout> get() = _workouts
     
-    private val _workoutSummaries = mutableListOf<WorkoutSummary>()
-    val workoutSummaries: List<WorkoutSummary> get() = _workoutSummaries
+    private val workoutSummaries = mutableListOf<WorkoutSummary>()
     
     init {
         loadWorkouts()
     }
     
+    @OptIn(ExperimentalSerializationApi::class)
     private fun loadWorkouts() {
         try {
-            val workoutsJsonString = context.assets.open("workouts.json").bufferedReader().use { it.readText() }
-            val shallowWorkouts = json.decodeFromString<List<Workout>>(workoutsJsonString)
-            
+            val shallowWorkouts = context.assets.open("workouts.json").use { stream ->
+                json.decodeFromStream<List<Workout>>(stream)
+            }
+
             val workoutSummaryIDs = shallowWorkouts
                 .flatMap { it.summaries }
                 .mapNotNull { it.workoutSummaryID }
             
             for (workoutSummaryID in workoutSummaryIDs) {
                 try {
-                    val summaryJsonString = context.assets.open("summaries/$workoutSummaryID.json")
-                        .bufferedReader().use { it.readText() }
-                    val workoutSummary = json.decodeFromString<WorkoutSummary>(summaryJsonString)
-                    
+                    val workoutSummary = context.assets.open("summaries/$workoutSummaryID.json").use { stream ->
+                        json.decodeFromStream<WorkoutSummary>(stream)
+                    }
+
                     val filteredSummary = workoutSummary.copy(
                         setSummaries = workoutSummary.setSummaries.filter { setSummary ->
-                            setSummary.exerciseSet?.id != nilUUIDString
+                            setSummary.exerciseSet?.id != NIL_UUID_STRING
                         }
                     )
-                    _workoutSummaries.add(filteredSummary)
+                    workoutSummaries.add(filteredSummary)
                 } catch (e: Exception) {
                     println("Failed to load workout summary $workoutSummaryID: ${e.message}")
                 }
@@ -58,19 +62,17 @@ class WorkoutsRepository @Inject constructor(
             val workoutIDs = shallowWorkouts.map { it.id }
             for (workoutID in workoutIDs) {
                 try {
-                    val workoutJsonString = context.assets.open("workouts/$workoutID.json")
-                        .bufferedReader().use { it.readText() }
-                    var workout = json.decodeFromString<Workout>(workoutJsonString)
+                    var workout = context.assets.open("workouts/$workoutID.json").use { stream ->
+                        json.decodeFromStream<Workout>(stream)
+                    }
                     workout = workout.copy(
-                        summaries = _workoutSummaries.filter { it.workoutID == workoutID }
+                        summaries = workoutSummaries.filter { it.workoutID == workoutID }
                     )
                     _workouts.add(workout)
                 } catch (e: Exception) {
                     println("Failed to load workout $workoutID: ${e.message}")
                 }
             }
-            
-            println("Loaded ${_workouts.size} workouts and ${_workoutSummaries.size} summaries")
         } catch (e: Exception) {
             println("Failed to load workouts: ${e.message}")
         }

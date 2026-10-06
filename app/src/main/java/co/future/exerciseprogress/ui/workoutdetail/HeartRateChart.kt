@@ -55,8 +55,10 @@ import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import kotlin.math.roundToInt
-
-private const val SECONDS_PER_MINUTE = 60
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 // The chart is a fixed picture of the whole workout, so it does not scroll or zoom.
 private val CHART_HEIGHT = 200.dp
@@ -64,8 +66,8 @@ private val CHART_HEIGHT = 200.dp
 // The y axis starts and ends on a multiple of this many beats per minute, with one more step of room beyond the data.
 private const val Y_AXIS_STEP_BPM = 10
 
-// Time labels along the bottom are spaced by the first interval (in minutes) that gives no more than the max count.
-private val TIME_LABEL_INTERVALS_MINUTES = listOf(1, 2, 5, 10, 15, 30, 60)
+// Time labels along the bottom are spaced by the first interval that gives no more than the max count.
+private val TIME_LABEL_INTERVALS = listOf(1.minutes, 2.minutes, 5.minutes, 10.minutes, 15.minutes, 30.minutes, 1.hours)
 private const val MAX_TIME_LABEL_INTERVALS = 5
 
 private val PEAK_DOT_SIZE = 12.dp
@@ -122,8 +124,8 @@ private fun HeartRateChart(chart: HeartRateChartUiState) {
     }
     // Labels are plain minute numbers. The axis title says they are minutes, which keeps the labels short.
     val minutesFormatter = remember {
-        CartesianValueFormatter { _, seconds, _ ->
-            (seconds / SECONDS_PER_MINUTE).roundToInt().toString()
+        CartesianValueFormatter { _, secondsSinceStart, _ ->
+            secondsSinceStart.seconds.toDouble(DurationUnit.MINUTES).roundToInt().toString()
         }
     }
     val yRange = remember(chart) {
@@ -154,7 +156,7 @@ private fun HeartRateChart(chart: HeartRateChartUiState) {
                         HorizontalAxis.ItemPlacer.aligned(spacing = { timeLabelSpacingSeconds(lastSecond) })
                     },
                     titleComponent = rememberAxisLabelComponent(),
-                    title = remember(timeAxisTitle) { { timeAxisTitle } }
+                    title = { timeAxisTitle }
                 ),
                 decorations = listOf(rememberPeakLine(chart)),
                 layerPadding = CHART_END_PADDING,
@@ -199,7 +201,11 @@ private fun rememberPeakLine(chart: HeartRateChartUiState): HorizontalLine {
             labelComponent = labelComponent,
             label = { label },
             // The label sits on the side away from the peak, so it doesn't land on top of the dot.
-            horizontalLabelPosition = if (isPeakInFirstHalf) Position.Horizontal.End else Position.Horizontal.Start
+            horizontalLabelPosition = if (isPeakInFirstHalf) {
+                Position.Horizontal.End
+            } else {
+                Position.Horizontal.Start
+            }
         )
     }
 }
@@ -231,7 +237,11 @@ private data class PeakPointProvider(
         entry: LineCartesianLayerModel.Entry,
         extraStore: ExtraStore
     ): LineCartesianLayer.Point? {
-        return if (entry.x == peakSeconds.toDouble()) point else null
+        return if (entry.x == peakSeconds.toDouble()) {
+            point
+        } else {
+            null
+        }
     }
 
     override fun getLargestPoint(extraStore: ExtraStore): LineCartesianLayer.Point = point
@@ -240,9 +250,10 @@ private data class PeakPointProvider(
 private fun Int.roundedDownToStep(): Int = this / Y_AXIS_STEP_BPM * Y_AXIS_STEP_BPM
 
 private fun timeLabelSpacingSeconds(totalSeconds: Int): Int {
-    val intervalMinutes = TIME_LABEL_INTERVALS_MINUTES.firstOrNull {
-        totalSeconds / (it * SECONDS_PER_MINUTE) <= MAX_TIME_LABEL_INTERVALS
-    } ?: TIME_LABEL_INTERVALS_MINUTES.last()
+    val chartDuration = totalSeconds.seconds
+    val interval = TIME_LABEL_INTERVALS.firstOrNull {
+        (chartDuration / it).toInt() <= MAX_TIME_LABEL_INTERVALS
+    } ?: TIME_LABEL_INTERVALS.last()
 
-    return intervalMinutes * SECONDS_PER_MINUTE
+    return interval.inWholeSeconds.toInt()
 }

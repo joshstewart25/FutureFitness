@@ -27,7 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.future.exerciseprogress.R
-import co.future.exerciseprogress.data.models.ExerciseSetCompletionState
+import co.future.exerciseprogress.data.models.enums.ExerciseSetCompletionState
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 private const val RESULT_PART_SEPARATOR = " · "
@@ -73,7 +74,11 @@ fun SetSectionCard(
                     )
                 }
                 Icon(
-                    imageVector = if (isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    imageVector = if (isExpanded) {
+                        Icons.Filled.ExpandLess
+                    } else {
+                        Icons.Filled.ExpandMore
+                    },
                     contentDescription = null
                 )
             }
@@ -162,7 +167,7 @@ private fun CompletionIcon(state: ExerciseSetCompletionState) {
 @Composable
 private fun SetResultUiState.resultText(): String {
     val parts = listOfNotNull(
-        weight?.let { "${it.toDisplayString()} $weightUnit" },
+        weight?.let { "${formatWeight(it)} $weightUnit" },
         reps?.let { pluralStringResource(R.plurals.set_result_reps, it, it) },
         durationSeconds?.let { stringResource(R.string.set_result_seconds, it) },
         distanceMeters?.let { stringResource(R.string.set_result_meters, it.roundToInt()) }
@@ -170,7 +175,6 @@ private fun SetResultUiState.resultText(): String {
     return parts.joinToString(RESULT_PART_SEPARATOR)
 }
 
-// 300.0 -> "300", 22.5 -> "22.5"
-private fun Float.toDisplayString(): String {
-    return if (this % 1f == 0f) toInt().toString() else toString()
+private fun formatWeight(weight: Float): String {
+    return DecimalFormat("#.##").format(weight)
 }

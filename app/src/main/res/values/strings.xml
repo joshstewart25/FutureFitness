@@ -5,8 +5,6 @@
     <string name="client_no_workouts">No workouts yet</string>
     <string name="workout_today">Today</string>
     <string name="workout_recovery_day">Recovery Day</string>
-    <string name="workout_duration_minutes">%1$d min</string>
-    <string name="workout_duration_hours_minutes">%1$d hr %2$d min</string>
     <string name="upcoming_workouts_empty">No workouts scheduled for the next 7 days</string>
     <string name="previous_workouts">Previous Workouts</string>
     <string name="previous_workouts_empty">No previous workouts yet</string>
