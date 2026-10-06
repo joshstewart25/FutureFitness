@@ -6,6 +6,7 @@
     <string name="workout_today">Today</string>
     <string name="workout_recovery_day">Recovery Day</string>
     <string name="workout_duration_minutes">%1$d min</string>
+    <string name="workout_duration_hours_minutes">%1$d hr %2$d min</string>
     <string name="upcoming_workouts_empty">No workouts scheduled for the next 7 days</string>
     <string name="previous_workouts">Previous Workouts</string>
     <string name="previous_workouts_empty">No previous workouts yet</string>
@@ -18,4 +19,38 @@
     <string name="filter_clear">Clear filters</string>
     <string name="date_range_picker_apply">Apply</string>
     <string name="date_range_picker_cancel">Cancel</string>
+    <string name="workout_detail_no_data">No data was recorded for this workout.</string>
+    <string name="heart_rate">Heart rate</string>
+    <string name="heart_rate_max">Max heart rate</string>
+    <string name="heart_rate_average">Avg heart rate</string>
+    <string name="heart_rate_value">%1$d bpm</string>
+    <string name="heart_rate_peak_label">Peak %1$d bpm</string>
+    <string name="heart_rate_time_axis_title">Minutes</string>
+    <string name="energy_burned">Energy burned</string>
+    <string name="energy_burned_value">%1$d kcal</string>
+    <string name="workout_duration_label">Duration</string>
+    <string name="notes">Notes</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_moderate">Moderate</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="workout_location">Location</string>
+    <string name="workout_location_map_description">Map showing where the workout took place</string>
+    <string name="set_summaries">Sets</string>
+    <string name="set_section_expand">Expand %1$s</string>
+    <string name="set_section_collapse">Collapse %1$s</string>
+    <string name="set_number">Set %1$d</string>
+    <string name="set_result_seconds">%1$d sec</string>
+    <string name="set_result_meters">%1$d m</string>
+    <string name="set_state_completed">Completed</string>
+    <string name="set_state_partial">Partially completed</string>
+    <string name="set_state_skipped">Skipped</string>
+    <plurals name="set_section_progress">
+        <item quantity="one">%1$d of %2$d set</item>
+        <item quantity="other">%1$d of %2$d sets</item>
+    </plurals>
+    <plurals name="set_result_reps">
+        <item quantity="one">%1$d rep</item>
+        <item quantity="other">%1$d reps</item>
+    </plurals>
 </resources>

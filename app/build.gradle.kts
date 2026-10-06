@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
     implementation(libs.kotlin.serialization.json)
     
     // Hilt
@@ -58,6 +59,9 @@ dependencies {
 
     // Charts
     implementation(libs.vico.compose.m3)
+
+    // Maps (OpenStreetMap, no API key needed)
+    implementation(libs.osmdroid.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Needed to download the map tiles for the workout location. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".ExerciseProgressApplication"
         android:allowBackup="true"

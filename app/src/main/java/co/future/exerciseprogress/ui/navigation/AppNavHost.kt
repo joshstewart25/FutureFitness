@@ -10,6 +10,7 @@ import co.future.exerciseprogress.ui.clientdetail.ClientDetailScreen
 import co.future.exerciseprogress.ui.components.ScreenScaffold
 import co.future.exerciseprogress.ui.previousworkouts.PreviousWorkoutsScreen
 import co.future.exerciseprogress.ui.welcome.WelcomeScreen
+import co.future.exerciseprogress.ui.workoutdetail.WorkoutDetailScreen
 
 @Composable
 fun AppNavHost(
@@ -40,9 +41,14 @@ fun AppNavHost(
             ScreenScaffold { contentPadding ->
                 PreviousWorkoutsScreen(
                     contentPadding = contentPadding,
-                    // TODO: Navigate to the workout detail screen once it exists.
-                    onWorkoutClick = {}
+                    onWorkoutClick = { workoutID -> navController.navigate(WorkoutDetail(workoutID)) }
                 )
+            }
+        }
+
+        composable<WorkoutDetail> {
+            ScreenScaffold { contentPadding ->
+                WorkoutDetailScreen(contentPadding = contentPadding)
             }
         }
     }

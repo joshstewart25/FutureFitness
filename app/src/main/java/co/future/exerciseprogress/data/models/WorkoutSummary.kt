@@ -75,9 +75,15 @@ data class WorkoutSummary(
     @SerialName("is_watch_present")
     val isWatchPresent: Boolean = false,
     
+    @SerialName("heart_rates")
+    val heartRates: List<HeartRateSample> = emptyList(),
+
+    @SerialName("locations")
+    val locations: List<WorkoutLocation> = emptyList(),
+
     @SerialName("set_summaries")
     val setSummaries: List<ExerciseSetSummary> = emptyList(),
-    
+
     @SerialName("updated_at")
     val updatedDate: Instant? = null,
     
