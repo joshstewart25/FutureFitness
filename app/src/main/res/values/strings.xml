@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Fitness Stats</string>
+    <string name="welcome_message">Welcome, %1$s</string>
+    <string name="client_last_workout">Last workout: %1$s</string>
+    <string name="client_no_workouts">No workouts yet</string>
 </resources>

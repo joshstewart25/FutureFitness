@@ -8,7 +8,10 @@ import kotlin.time.Instant
 data class Workout(
     @SerialName("id")
     val id: String,
-    
+
+    @SerialName("user_id")
+    val userID: String? = null,
+
     @SerialName("name")
     val name: String? = null,
     
@@ -47,4 +50,11 @@ data class Workout(
     
     val exerciseSetsFromSections: List<ExerciseSet>
         get() = sections.flatMap { it.exerciseSets }
+
+    // Only fully completed summaries count. Partial or abandoned attempts are ignored.
+    val lastCompletedAt: Instant?
+        get() = summaries
+            .filter { it.completionState == WorkoutCompletionState.FULL }
+            .mapNotNull { it.completedAt }
+            .maxOrNull()
 }

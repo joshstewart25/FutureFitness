@@ -5,3 +5,4 @@ When developing in this repo, I would like you to keep a few things in mind:
 4. Don't assume everything - If you are not sure about a particular direction, don't make assumptions that one path is right vs. another. Always double-check with the developer.
 5. Use leading architecture principles - Use MVVM as the basis for structure, for example. We want to make sure that the application is written in a way that most Android devs can understand if they need to jump in from another project.
 6. KISS principle - Last but not least, always keep things to their simplest forms. No need to convolute something unnecessarily.
+7. Edge-to-edge - The app draws behind the system bars. Wrap every screen in `ScreenScaffold` (ui/components) and, for scrolling content, pass the `contentPadding` it provides into the list's own `contentPadding` instead of using `Modifier.padding` on the list. This keeps content from overlapping the status bar or getting cut off by the gesture bar.
